@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Portfolio — Sponsored by NAVTCC</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,200&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #040a0f;
+    --surface: #081220;
+    --card: #0c1a2e;
+    --accent: #00d4ff;
+    --accent2: #7b2fff;
+    --accent3: #ff6b35;
+    --text: #e8f4f8;
+    --muted: #5a7a8a;
+    --border: rgba(0,212,255,0.15);
+    --glow: rgba(0,212,255,0.25);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition: transform 0.1s ease;
+  }
+  .cursor-ring {
+    width: 40px; height: 40px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    opacity: 0.6;
+  }
+
+  /* Background Grid & Effects */
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.18;
+    animation: orbFloat 15s ease-in-out infinite;
+  }
+  .orb1 { width: 600px; height: 600px; background: var(--accent2); top: -200px; right: -100px; animation-delay: 0s; }
+  .orb2 { width: 400px; height: 400px; background: var(--accent); bottom: 100px; left: -100px; animation-delay: 5s; }
+  .orb3 { width: 300px; height: 300px; background: var(--accent3); top: 50%; left: 40%; animation-delay: 10s; }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -40px) scale(1.05); }
+    66% { transform: translate(-20px, 30px) scale(0.95); }
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    background: rgba(4,10,15,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo span {
+    color: var(--accent);
+    font-size: 0.7rem;
+    border: 1px solid var(--accent);
+    padding: 2px 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .sponsor-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+  .sponsor-badge strong { color: var(--accent3); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 60px 80px;
+    overflow: hidden;
+  }
+
+  .hero-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-label::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,212,255,0.6);
+    display: block;
+  }
+  .hero-title .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+
+  .hero-sub {
+    max-width: 520px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 16px 36px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-primary:hover { transform: translateY(-2px); }
+
+  .btn-secondary {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+  }
+  .btn-secondary:hover { color: var(--text); }
+
+  .hero-stats {
+    position: absolute;
+    right: 60px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    opacity: 0;
+    animation: fadeLeft 0.8s 1s forwards;
+  }
+  .stat { text-align: right; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Ticker */
+  .ticker-wrap {
+    position: relative;
+    z-index: 2;
+    background: var(--accent);
+    padding: 12px 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .ticker {
+    display: flex;
+    gap: 60px;
+    animation: ticker 25s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .ticker-dot { width: 6px; height: 6px; background: var(--bg); border-radius: 50%; opacity: 0.5; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Section Base */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 60px;
+  }
+
+  .section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 60px;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 60px;
+  }
+
+  /* AI Projects */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+  }
+
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    cursor: none;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--glow), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .project-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .project-card:hover::before { opacity: 1; }
+
+  .card-lg { grid-column: span 7; }
+  .card-md { grid-column: span 5; }
+  .card-sm { grid-column: span 4; }
+
+  .project-tag {
+    display: inline-block;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+    margin-bottom: 20px;
+  }
+
+  .project-num {
+    position: absolute;
+    top: 36px; right: 36px;
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    color: rgba(0,212,255,0.06);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .project-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tech-pill {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    background: rgba(0,212,255,0.08);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  .project-visual {
+    height: 160px;
+    margin: 24px -36px -36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-visual canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Neural net canvas area */
+  .neural-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+  }
+
+  /* Skills */
+  .skills-section { background: var(--surface); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .skill-item {
+    padding: 40px;
+    border: 1px solid var(--border);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .skill-item:hover { background: var(--card); }
+  .skill-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .skill-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .skill-desc {
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .skill-bar {
+    height: 2px;
+    background: var(--border);
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    animation: barFill 1.5s ease forwards;
+    transform-origin: left;
+  }
+  @keyframes barFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  /* About / NAVTCC Sponsor */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-visual {
+    position: relative;
+    height: 500px;
+  }
+
+  .navtcc-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 50px;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  .navtcc-box::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent2), var(--accent));
+  }
+
+  .navtcc-logo-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .navtcc-acronym {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent3), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .navtcc-full {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .navtcc-quote {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--text);
+    border-left: 2px solid var(--accent3);
+    padding-left: 20px;
+  }
+
+  .navtcc-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .meta-item { }
+  .meta-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .meta-key {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .about-text p {
+    font-size: 0.85rem;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .about-text p strong { color: var(--text); }
+
+  /* Testimonials */
+  .testimonials-section { background: var(--surface); }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .testimonial-card {
+    border: 1px solid var(--border);
+    padding: 36px;
+    background: var(--card);
+    position: relative;
+  }
+  .testimonial-card::before {
+    content: '"';
+    font-family: 'Fraunces', serif;
+    font-size: 8rem;
+    color: var(--accent);
+    opacity: 0.08;
+    position: absolute;
+    top: 10px;
+    left: 24px;
+    line-height: 1;
+  }
+  .testimonial-text {
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .author-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .author-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .author-role {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Contact / CTA */
+  .contact-section {
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 140px 60px;
+  }
+  .contact-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,212,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(3rem, 7vw, 7rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 30px;
+  }
+  .contact-title em {
+    font-style: italic;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .contact-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    max-width: 400px;
+    margin: 0 auto 50px;
+    line-height: 1.8;
+  }
+
+  .contact-form {
+    display: flex;
+    max-width: 540px;
+    margin: 0 auto;
+    gap: 0;
+  }
+  .contact-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-right: none;
+    padding: 16px 24px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .contact-input::placeholder { color: var(--muted); }
+  .contact-input:focus { border-color: var(--accent); }
+  .contact-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 16px 32px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s;
+  }
+  .contact-btn:hover { background: #00b8d9; }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 40px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-left {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .footer-left strong { color: var(--accent3); }
+  .footer-right {
+    display: flex;
+    gap: 30px;
+  }
+  .footer-link {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-link:hover { color: var(--accent); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s, transform 0.7s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* Divider */
+  .h-divider {
+    position: relative;
+    z-index: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 60px;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-stats { display: none; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .card-lg, .card-md, .card-sm { grid-column: span 1; }
+    .skills-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-right { flex-wrap: wrap; justify-content: center; }
+    .contact-form { flex-direction: column; }
+    .contact-input { border-right: 1px solid var(--border); border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="bg-grid"></div>
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">
+    AI PORTFOLIO <span>NAVTCC</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Capabilities</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="sponsor-badge">
+    Sponsored by <strong>NAVTCC</strong>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-label">Artificial Intelligence Portfolio</div>
+  <h1 class="hero-title">
+    <em>Intelligent</em>
+    <span class="highlight">Systems</span>
+    <span style="color: var(--muted); font-size: 0.5em; font-family:'DM Mono',monospace; font-weight:300; letter-spacing:0.1em;">Shaping Tomorrow</span>
+  </h1>
+  <p class="hero-sub">
+    A curated showcase of cutting-edge AI research, models, and applications — developed under the vision of NAVTCC to empower the next generation of intelligent technology.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn-primary">Explore Projects</a>
+    <a href="#about" class="btn-secondary">→ Our Mission</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">12<span>+</span></div>
+      <div class="stat-label">AI Models</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">98<span>%</span></div>
+      <div class="stat-label">Accuracy</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3<span>k</span></div>
+      <div class="stat-label">Datasets</div>
+    </div>
+  </div>
+</section>
+
+<!-- Ticker -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <div class="ticker-item">Machine Learning <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Deep Neural Networks <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Natural Language Processing <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Computer Vision <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Generative AI <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Reinforcement Learning <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Edge AI <div class="ticker-dot"></div></div>
+    <div class="ticker-item">NAVTCC Initiative <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Machine Learning <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Deep Neural Networks <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Natural Language Processing <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Computer Vision <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Generative AI <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Reinforcement Learning <div class="ticker-dot"></div></div>
+    <div class="ticker-item">Edge AI <div class="ticker-dot"></div></div>
+    <div class="ticker-item">NAVTCC Initiative <div class="ticker-dot"></div></div>
+  </div>
+</div>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="section-label">Featured Work</div>
+  <h2 class="section-title reveal">AI Projects &<br><em style="font-family:'Fraunces',serif; font-style:italic; color:var(--accent)">Research</em></h2>
+
+  <div class="projects-grid">
+    <!-- Large card -->
+    <div class="project-card card-lg reveal">
+      <span class="project-tag">Deep Learning</span>
+      <div class="project-num">01</div>
+      <h3 class="project-title">NeuroVision — Real-Time Object Detection</h3>
+      <p class="project-desc">A high-performance computer vision system leveraging YOLOv8 architecture fine-tuned on custom datasets. Achieves 94.7% mAP with sub-10ms inference latency on edge hardware. Deployed across NAVTCC smart campus infrastructure.</p>
+      <div class="project-tech">
+        <span class="tech-pill">PyTorch</span>
+        <span class="tech-pill">YOLOv8</span>
+        <span class="tech-pill">CUDA</span>
+        <span class="tech-pill">OpenCV</span>
+        <span class="tech-pill">TensorRT</span>
+      </div>
+      <div class="project-visual">
+        <canvas id="cvCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Medium card -->
+    <div class="project-card card-md reveal reveal-delay-1">
+      <span class="project-tag">NLP</span>
+      <div class="project-num">02</div>
+      <h3 class="project-title">LinguaCore — Multilingual NLP Engine</h3>
+      <p class="project-desc">Transformer-based model supporting Urdu, English & Arabic for document classification, sentiment analysis, and semantic search — tailored for Pakistan's digital ecosystem.</p>
+      <div class="project-tech">
+        <span class="tech-pill">BERT</span>
+        <span class="tech-pill">HuggingFace</span>
+        <span class="tech-pill">FastAPI</span>
+        <span class="tech-pill">Urdu NLP</span>
+      </div>
+    </div>
+
+    <!-- 3 small cards -->
+    <div class="project-card card-sm reveal">
+      <span class="project-tag">Generative AI</span>
+      <div class="project-num">03</div>
+      <h3 class="project-title">SynthGen Image Studio</h3>
+      <p class="project-desc">Diffusion model pipeline for controlled image synthesis and creative design generation with style transfer capabilities.</p>
+      <div class="project-tech">
+        <span class="tech-pill">Stable Diffusion</span>
+        <span class="tech-pill">LoRA</span>
+      </div>
+    </div>
+
+    <div class="project-card card-sm reveal reveal-delay-1">
+      <span class="project-tag">Reinforcement Learning</span>
+      <div class="project-num">04</div>
+      <h3 class="project-title">AdaptBot — Autonomous Scheduling Agent</h3>
+      <p class="project-desc">RL-based agent that optimizes resource allocation and scheduling for NAVTCC training centers using PPO and multi-objective rewards.</p>
+      <div class="project-tech">
+        <span class="tech-pill">PPO</span>
+        <span class="tech-pill">Ray RLlib</span>
+      </div>
+    </div>
+
+    <div class="project-card card-sm reveal reveal-delay-2">
+      <span class="project-tag">Predictive Analytics</span>
+      <div class="project-num">05</div>
+      <h3 class="project-title">ForecastAI — Demand Intelligence</h3>
+      <p class="project-desc">Time-series forecasting system using Temporal Fusion Transformers for workforce skill demand prediction across sectors.</p>
+      <div class="project-tech">
+        <span class="tech-pill">TFT</span>
+        <span class="tech-pill">MLflow</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="h-divider"></div>
+
+<!-- Skills -->
+<section id="skills" class="skills-section">
+  <div class="section-label">Core Capabilities</div>
+  <h2 class="section-title reveal">What We<br><em style="font-family:'Fraunces',serif; font-style:italic; color:var(--accent)">Build</em></h2>
+
+  <div class="skills-grid">
+    <div class="skill-item reveal">
+      <span class="skill-icon">🧠</span>
+      <div class="skill-name">Neural Architecture Design</div>
+      <p class="skill-desc">Custom CNN, RNN, Transformer, and hybrid architectures for domain-specific tasks. End-to-end model design, training, and deployment pipelines.</p>
+      <div class="skill-bar"><div class="skill-bar-fill" style="width:92%"></div></div>
+    </div>
+    <div class="skill-item reveal reveal-delay-1">
+      <span class="skill-icon">💬</span>
+      <div class="skill-name">Conversational AI</div>
+      <p class="skill-desc">Building dialogue systems, chatbots, and voice assistants with intent recognition and contextual memory for enterprise and educational use.</p>
+      <div class="skill-bar"><div class="skill-bar-fill" style="width:87%"></div></div>
+    </div>
+    <div class="skill-item reveal reveal-delay-2">
+      <span class="skill-icon">👁️</span>
+      <div class="skill-name">Computer Vision</div>
+      <p class="skill-desc">Object detection, segmentation, OCR, face recognition, and video analytics for smart surveillance and automation systems.</p>
+      <div class="skill-bar"><div class="skill-bar-fill" style="width:95%"></div></div>
+    </div>
+    <div class="skill-item reveal">
+      <span class="skill-icon">📊</span>
+      <div class="skill-name">Data Science & Analytics</div>
+      <p class="skill-desc">Exploratory analysis, feature engineering, statistical modeling, and dashboarding to extract actionable insights from complex datasets.</p>
+      <div class="skill-bar"><div class="skill-bar-fill" style="width:89%"></div></div>
+    </div>
+    <div class="skill-item reveal reveal-delay-1">
+      <span class="skill-icon">🤖</span>
+      <div class="skill-name">MLOps & Deployment</div>
+      <p class="skill-desc">CI/CD for ML models, Kubernetes orchestration, model monitoring, drift detection, and auto-retraining pipelines in production environments.</p>
+      <div class="skill-bar"><div class="skill-bar-fill" style="width:83%"></div></div>
+    </div>
+    <div class="skill-item reveal reveal-delay-2">
+      <span class="skill-icon">🔐</span>
+      <div class="skill-name">Responsible AI</div>
+      <p class="skill-desc">Bias detection, fairness testing, explainability (SHAP, LIME), and AI ethics frameworks aligned with NAVTCC's commitment to ethical technology.</p>
+      <div class="skill-bar"><div class="skill-bar-fill" style="width:78%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- About / NAVTCC -->
+<section id="about">
+  <div class="section-label">Our Sponsor</div>
+  <h2 class="section-title reveal">Powered by<br><em style="font-family:'Fraunces',serif; font-style:italic; color:var(--accent3)">NAVTCC</em></h2>
+
+  <div class="about-grid">
+    <div class="about-visual reveal">
+      <div class="navtcc-box">
+        <div class="navtcc-logo-area">
+          <div class="navtcc-acronym">NAVTCC</div>
+          <div class="navtcc-full">National Vocational &<br>Technical Training<br>Commission</div>
+        </div>
+        <div class="navtcc-quote">
+          "Bridging the gap between Pakistan's workforce and the demands of the future through technology and skills."
+        </div>
+        <div class="navtcc-meta">
+          <div class="meta-item">
+            <div class="meta-value">500+</div>
+            <div class="meta-key">Training Centers</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-value">2M+</div>
+            <div class="meta-key">Trained Individuals</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-value">150+</div>
+            <div class="meta-key">AI Courses</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-value">30+</div>
+            <div class="meta-key">Industry Partners</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-text reveal reveal-delay-1">
+      <p>The <strong>National Vocational & Technical Training Commission (NAVTCC)</strong> is Pakistan's premier government authority dedicated to standardizing and promoting technical education and vocational training across the country.</p>
+      <p>This AI Portfolio represents NAVTCC's commitment to integrating <strong>Artificial Intelligence</strong> into its core curriculum and national digital transformation agenda — training the workforce of tomorrow.</p>
+      <p>Through strategic partnerships with universities, technology companies, and research institutions, NAVTCC is cultivating a generation of <strong>AI-literate professionals</strong> who can compete on the global stage.</p>
+      <p>Projects showcased here are built by <strong>NAVTCC-certified students and researchers</strong> — proof that world-class AI development is happening right here in Pakistan.</p>
+      <br>
+      <a href="#contact" class="btn-primary" style="display:inline-block; text-decoration:none;">Join the Program →</a>
+    </div>
+  </div>
+</section>
+
+<div class="h-divider"></div>
+
+<!-- Testimonials -->
+<section id="testimonials" class="testimonials-section">
+  <div class="section-label">Community</div>
+  <h2 class="section-title reveal">Voices from<br><em style="font-family:'Fraunces',serif; font-style:italic; color:var(--accent)">the Field</em></h2>
+
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <p class="testimonial-text">NAVTCC's AI program completely transformed my career. Within 6 months I built a computer vision system that's now deployed in 3 factories across Lahore.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">AK</div>
+        <div>
+          <div class="author-name">Ayesha Khan</div>
+          <div class="author-role">ML Engineer, TechPak</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-1">
+      <p class="testimonial-text">The depth of AI training here rivals international standards. NAVTCC gives you the tools, mentorship and real project exposure to make you industry-ready from day one.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">UR</div>
+        <div>
+          <div class="author-name">Usman Raza</div>
+          <div class="author-role">AI Researcher, NUST</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <p class="testimonial-text">As an employer, I hire NAVTCC graduates with confidence. Their foundational knowledge in AI and their practical project portfolio speaks louder than any certification.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">SM</div>
+        <div>
+          <div class="author-name">Sara Mirza</div>
+          <div class="author-role">CTO, DigiEdge Solutions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="contact-section">
+  <div class="section-label" style="justify-content:center; margin-bottom:20px;">Get Involved</div>
+  <h2 class="contact-title reveal">
+    Ready to Build<br>with <em>Intelligent</em> AI?
+  </h2>
+  <p class="contact-sub reveal reveal-delay-1">Join NAVTCC's growing AI community. Get access to projects, mentorship, and career opportunities in Pakistan's AI ecosystem.</p>
+
+  <div class="contact-form reveal reveal-delay-2">
+    <input class="contact-input" type="email" placeholder="your@email.com">
+    <button class="contact-btn">Apply Now</button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-left">
+    © 2025 AI Portfolio · Sponsored by <strong>NAVTCC</strong> · National Vocational & Technical Training Commission
+  </div>
+  <div class="footer-right">
+    <a href="#" class="footer-link">Privacy</a>
+    <a href="#" class="footer-link">Terms</a>
+    <a href="#" class="footer-link">GitHub</a>
+    <a href="#" class="footer-link">navttc.gov.pk</a>
+  </div>
+</footer>
+
+<script>
+// Custom Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX - 6 + 'px';
+  cursor.style.top = e.clientY - 6 + 'px';
+  rx += (e.clientX - 20 - rx) * 0.12;
+  ry += (e.clientY - 20 - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+});
+
+function animRing() {
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+// Scroll Reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => observer.observe(r));
+
+// CV Canvas — animated scanning lines
+const cvCanvas = document.getElementById('cvCanvas');
+if (cvCanvas) {
+  const ctx = cvCanvas.getContext('2d');
+  cvCanvas.width = cvCanvas.offsetWidth || 500;
+  cvCanvas.height = 160;
+  let t = 0;
+
+  function drawCV() {
+    ctx.clearRect(0, 0, cvCanvas.width, cvCanvas.height);
+    const w = cvCanvas.width, h = cvCanvas.height;
+
+    // Dark BG
+    ctx.fillStyle = '#040a0f';
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(0,212,255,0.07)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 30) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for (let y = 0; y < h; y += 30) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    // Bounding boxes
+    const boxes = [
+      { x: 40, y: 20, w: 80, h: 60, label: 'Person', conf: 98 },
+      { x: 200, y: 30, w: 100, h: 80, label: 'Vehicle', conf: 94 },
+      { x: 380, y: 15, w: 70, h: 50, label: 'Object', conf: 87 },
+    ];
+    boxes.forEach((b, i) => {
+      const alpha = 0.6 + 0.4 * Math.sin(t * 0.05 + i * 2);
+      ctx.strokeStyle = `rgba(0,212,255,${alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(b.x, b.y, b.w, b.h);
+
+      ctx.fillStyle = `rgba(0,212,255,${alpha * 0.15})`;
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+
+      // Corner accents
+      const cs = 10;
+      ctx.strokeStyle = `rgba(0,212,255,${alpha})`;
+      ctx.lineWidth = 2;
+      [[b.x,b.y],[b.x+b.w,b.y],[b.x,b.y+b.h],[b.x+b.w,b.y+b.h]].forEach(([cx,cy], ci) => {
+        ctx.beginPath();
+        ctx.moveTo(cx + (ci%2===0 ? cs : -cs), cy);
+        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx, cy + (ci<2 ? cs : -cs));
+        ctx.stroke();
+      });
+
+      // Label
+      ctx.fillStyle = 'rgba(0,212,255,0.9)';
+      ctx.font = '9px DM Mono, monospace';
+      ctx.fillText(`${b.label} ${b.conf}%`, b.x + 4, b.y - 4);
+    });
+
+    // Scan line
+    const scanY = (Math.sin(t * 0.03) * 0.5 + 0.5) * h;
+    const grad = ctx.createLinearGradient(0, scanY - 20, 0, scanY + 20);
+    grad.addColorStop(0, 'transparent');
+    grad.addColorStop(0.5, 'rgba(0,212,255,0.4)');
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, scanY - 20, w, 40);
+
+    t++;
+    requestAnimationFrame(drawCV);
+  }
+  drawCV();
+}
+</script>
+</body>
+</html>
